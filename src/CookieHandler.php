@@ -1,6 +1,6 @@
 <?php
 /** 
- * This is the Cookie Handler class, implementing the CookieHandlerInterface.
+ * This is the Cookie Handler class.
  * This class uses OpenSSL to encrypt/decrypt the cookies value.
  *
  * @author Salvatore Q Zeroastro <zeroastro@gmail.com>
