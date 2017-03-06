@@ -47,9 +47,17 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCookie()
     {
-        $_COOKIE = array('testName' => 'testValue');
+        $_COOKIE = [
+            'testName' => json_encode([
+                'name' => 'testName', 
+                'value' => 'testValue'
+            ])
+        ];
 
-        $this->assertEquals($_COOKIE['testName'], $this->cookieHandler->getCookie('testName'));
+        $cookie = $this->cookieHandler->getCookie('testName');
+
+        $this->assertInstanceOf(Cookie::class, $cookie);
+        $this->assertEquals('testValue', $cookie->getValue());
     } 
 
     /**
@@ -95,11 +103,16 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
     public function testGetCookieSecure()
     {
         /* original value is 'testValue' */
-        $_COOKIE = array('testName' => 'R14aisQQQ6fICqQQKp31Cp96tR22L32bvCOV/keAnTM=');
+        $_COOKIE = [
+            'testName' => 'vBHcIedwCAgamuWDIMnVPBmAWoHuuN0mdD/apccBzPsOAkhZuYM5UQ/QJkplCKdIRa6aWsNsPjQpumTb41zaPkOd2usbGgyWKFCe93Mm2v2C03JXnSNTRv+WfuUpnAnsS+zbAnBdUbbQDk8gFs0oxgqXZhP9rc5nNzggYrXqthg='
+        ];
 
         $cookieHandlerSecure = new CookieHandler('testKeyForEncryption');
 
-        $this->assertEquals('testValue', $cookieHandlerSecure->getCookie('testName', true));
+        $cookie = $cookieHandlerSecure->getCookie('testName', true);
+
+        $this->assertInstanceOf(Cookie::class, $cookie);
+        $this->assertEquals('testValue', $cookie->getValue());
     } 
 
     /**

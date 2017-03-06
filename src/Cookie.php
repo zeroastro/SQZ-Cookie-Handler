@@ -61,20 +61,6 @@ class Cookie
     protected $httpOnly;
 
     /**
-     * The cookie name
-     *
-     * @var string
-     */
-    protected $sameSite;
-
-    /*
-     * SameSite valid values
-     * null | lax | strict
-     */
-    const SAMESITE_LAX      = 'lax';
-    const SAMESITE_STRICT   = 'strict';
-
-    /**
      * Cookie Constructor Method
      *
      * @param string                 $name     The name of the cookie
@@ -84,13 +70,12 @@ class Cookie
      * @param string                 $domain   The domain of the cookie
      * @param bool                   $secure   True when the cookie can be transmitted only via HTTPS
      * @param bool                   $httpOnly True if the cookie can be accessible only via HTTP protocol
-     * @param string|null            $sameSite The SameSite value (null | lax | strict)
      *
      * @throws \InvalidArgumentException If the Name is empty
      *                                   If the Expiration time is not valid
      *                                   If the SameSite parameter is not valid
      */
-    public function __construct($name, $value = null, $expire = 0, $path = '/', $domain = null, $secure = false, $http_only = true, $same_site = null)
+    public function __construct($name, $value = null, $expire = 0, $path = '/', $domain = null, $secure = false, $http_only = true)
     {
         // Check if the Name is valid
         if (empty($name)) {
@@ -110,11 +95,6 @@ class Cookie
             throw new \InvalidArgumentException('Cookie Error: Expiration time is not valid.');
         }
 
-        // Check if SameSite value is valid
-        if (!(self::SAMESITE_LAX === $same_site || self::SAMESITE_STRICT === $same_site || is_null($same_site))) {
-            throw new \InvalidArgumentException('The "SameSite" parameter value is not valid.');
-        }
-
         // Values assignment
         $this->name     = $name;
         $this->value    = $value;
@@ -123,7 +103,27 @@ class Cookie
         $this->domain   = $domain;
         $this->secure   = (bool) $secure;
         $this->httpOnly = (bool) $http_only;
-        $this->sameSite = $same_site;
+    }
+
+    /**
+     * Create a cookie object using values from a json
+     *
+     * @params string $cookie_json
+     * @return Cookie
+     */
+    public static function createFromJSON($cookie_json)
+    {
+        $cookie_obj = json_decode($cookie_json);
+
+        return new static(
+            $cookie_obj->name,
+            $cookie_obj->value,
+            isset($cookie_obj->expire) ? $cookie_obj->expire : 0,
+            isset($cookie_obj->path) ? $cookie_obj->path : '/',
+            isset($cookie_obj->domain) ? $cookie_obj->domain : null,
+            isset($cookie_obj->secure) ? $cookie_obj->secure : false,
+            isset($cookie_obj->httpOnly) ? $cookie_obj->httpOnly : true
+        );
     }
 
     /**
@@ -207,12 +207,22 @@ class Cookie
     }
 
     /**
-     * Gets the SameSite attribute.
+     * Gets the JSON of the Cookie.
      *
-     * @return string|null
+     * @return string
      */
-    public function getSameSite()
+    public function getJSON()
     {
-        return $this->sameSite;
+        $cookie_array = [
+            'name' => $this->getName(),
+            'value' => $this->getValue(),
+            'expire' => $this->getExpires(),
+            'path' => $this->getPath(),
+            'domain' => $this->getDomain(),
+            'secure' => $this->isSecure(),
+            'httpOnly' => $this->isHttpOnly()
+        ];
+
+        return json_encode($cookie_array);
     }
 }

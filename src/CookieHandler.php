@@ -19,10 +19,18 @@ class CookieHandler
      */
     protected $key;
 
-    /* Encryption Method */
+    /** 
+     * Encryption Method
+     *
+     * @var string 
+     */
     const ENCRYPTION_METHOD = 'AES-256-CBC';
 
-    /* Size of the Initial Vector */
+    /**
+     * Size of the Initial Vector 
+     *
+     * @var int
+     */
     const IV_SIZE = 16;
 
     /**
@@ -39,6 +47,7 @@ class CookieHandler
                 __CLASS__
             ));
         }
+
         $this->key = $key;
     }
 
@@ -51,10 +60,10 @@ class CookieHandler
     public function saveCookie(Cookie $cookie, $encrypt = false)
     {
         $value = ((true === $encrypt) && !empty($this->key))
-            ? $this->encrypt($cookie->getValue())
-            : $cookie->getValue();
+            ? $this->encrypt($cookie->getJSON())
+            : $cookie->getJSON();
 
-        return setcookie(
+        return \setcookie(
             $cookie->getName(),
             $value,
             $cookie->getExpires(),
@@ -65,20 +74,22 @@ class CookieHandler
     }
 
     /**
-     * Whether it exists, return the value of the requested cookie 
+     * Whether it exists, return the Cookie 
      *
      * @param string $cookieName The name of the cookie to retrieve
-     * @return string|null
+     * @return Cookie|null
      */
     public function getCookie($cookie_name, $decrypt = false)
     {
         if (empty($_COOKIE[$cookie_name])) {
-            return false;
+            return null;
         }
 
-        return ((true === $decrypt) && !empty($this->key))
+        $cookie_json = ((true === $decrypt) && !empty($this->key))
             ? $this->decrypt($_COOKIE[$cookie_name])
             : $_COOKIE[$cookie_name];
+
+        return Cookie::createFromJSON($cookie_json);
     }
 
     /**

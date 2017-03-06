@@ -18,16 +18,17 @@ class CookieTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->cookie = new Cookie(
-            'testName',
-            'testValue',
-            65535,
-            'testPath',
-            'testDomain',
-            true,
-            true,
-            'strict'
-        );
+        $cookieArray = [
+            'name' => 'testName',
+            'value' => 'testValue',
+            'expire' => 65535,
+            'path' => 'testPath',
+            'domain' => 'testDomain',
+            'secure' => true,
+            'httpOnly' => true
+        ];
+
+        $this->cookie = Cookie::createFromJSON(json_encode($cookieArray));
     }
 
     /**
@@ -48,16 +49,6 @@ class CookieTest extends \PHPUnit_Framework_TestCase
     public function testConstructorWithInvalidExpires()
     {
         $cookie = new Cookie('name', 'value', false);
-    }
-
-    /**
-     * Test constructor with invalid SameSite value
-     *
-     * @expectedException \InvalidArgumentException
-     */
-    public function testConstructorWithInvalidSameSite()
-    {
-        $cookie = new Cookie('name', 'value', 65535, '/', 'domain', true, true, 'invalidSameSite');
     }
 
     /**
@@ -153,13 +144,5 @@ class CookieTest extends \PHPUnit_Framework_TestCase
     public function testIsHttpOnly()
     {
         $this->assertTrue($this->cookie->isSecure());
-    }
-
-    /**
-     * Test getSameSite()
-     */
-    public function testGetSameSite()
-    {
-        $this->assertEquals($this->cookie->getSameSite(), 'strict');
     }
 }
