@@ -72,14 +72,18 @@ class Cookie
      * @param bool                   $httpOnly True if the cookie can be accessible only via HTTP protocol
      *
      * @throws \InvalidArgumentException If the Name is empty
+     *                                   If the Value is null
      *                                   If the Expiration time is not valid
-     *                                   If the SameSite parameter is not valid
      */
-    public function __construct($name, $value = null, $expire = 0, $path = '/', $domain = null, $secure = false, $http_only = true)
+    public function __construct($name, $value = null, $expire = null, $path = null, $domain = null, $secure = null, $http_only = null)
     {
         // Check if the Name is valid
         if (empty($name)) {
             throw new \InvalidArgumentException('Cookie Error: The cookie name cannot be empty.');
+        }
+
+        if (is_null($value)) {
+            throw new \InvalidArgumentException('Cookie Error: The cookie value cannot be empty.');
         }
 
         // DateTime Conversion
@@ -87,11 +91,14 @@ class Cookie
             case ($expire instanceof \DateTimeInterface) :
                 $expire = $expire->format('U');
                 break;
+            case (is_null($expire)):
+                $expire = 0;
+                break;
             case (!is_numeric($expire)) :
                 $expire = strtotime($expire);
                 break;
         }
-        if (is_null($expire) || (false === $expire)) {
+        if (false === $expire) {
             throw new \InvalidArgumentException('Cookie Error: Expiration time is not valid.');
         }
 
@@ -99,10 +106,10 @@ class Cookie
         $this->name     = $name;
         $this->value    = $value;
         $this->expire   = (int) $expire;
-        $this->path     = $path;
+        $this->path     = !is_null($path) ? $path : '/';
         $this->domain   = $domain;
-        $this->secure   = (bool) $secure;
-        $this->httpOnly = (bool) $http_only;
+        $this->secure   = !is_null($secure) ? (bool) $secure : false;
+        $this->httpOnly = !is_null($http_only) ? (bool) $http_only : true;
     }
 
     /**

@@ -42,6 +42,16 @@ class CookieTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test constructor without value
+     *
+     * @expectedException \InvalidArgumentException
+     */
+    public function testConstructorWithoutValue()
+    {
+        $cookie = new Cookie('name');
+    }
+
+    /**
      * Test constructor with invalid expires
      *
      * @expectedException \InvalidArgumentException
