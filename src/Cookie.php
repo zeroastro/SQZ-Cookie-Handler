@@ -96,7 +96,6 @@ class Cookie
                 break;
             case (!is_numeric($expire)) :
                 $expire = strtotime($expire);
-                break;
         }
         if (false === $expire) {
             throw new \InvalidArgumentException('Cookie Error: Expiration time is not valid.');

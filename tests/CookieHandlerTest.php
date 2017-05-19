@@ -11,7 +11,6 @@ namespace SQZ_CookieHandler_Test;
 
 use \SQZ_CookieHandler\Cookie;
 use \SQZ_CookieHandler\CookieHandler;
-use \ReflectionClass;
 
 class CookieHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -94,6 +93,16 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($cookieHandlerSecure->saveCookie($this->cookie, true));
     }
+
+    /**
+     * Test the getCookie() function with an empty value
+     */
+    public function testGetCookieEmpty()
+    {
+        $cookie = $this->cookieHandler->getCookie('IDontExist');
+
+        $this->assertNull($cookie);
+    } 
 
     /**
      * Test the getCookie() function with decryption

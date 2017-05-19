@@ -66,7 +66,8 @@ class CookieTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructor()
     {
-        $this->assertInstanceOf(Cookie::class, $this->cookie);
+        $cookie = new Cookie('name', 'value');
+        $this->assertInstanceOf(Cookie::class, $cookie);
     }
 
     /**
