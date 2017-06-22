@@ -2,7 +2,7 @@
 /** 
  * This Class represents a cookie.
  *
- * @author Salvatore Q Zeroastro <zeroastro@gmail.com>
+ * @author Salvo Quaranta (Zeroastro) <salvoquaranta@gmail.com>
  * @copyright MIT License
  * @license https://github.com/zeroastro/SQZ-Cookie-Handler/blob/master/LICENSE
  */

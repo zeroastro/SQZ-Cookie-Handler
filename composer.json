@@ -5,8 +5,8 @@
     "keywords": ["cookie", "cookie handler"],
     "homepage": "https://github.com/zeroastro/SQZ-Cookie-Handler",
     "authors": [{
-        "name": "Salvatore Q Zeroastro",
-        "email": "zeroastro@gmail.com",
+        "name": "Salvo Quaranta (Zeroastro)",
+        "email": "salvoquaranta@gmail.com",
         "role": "Creator"
     }],
     "minimum-stability" : "dev",

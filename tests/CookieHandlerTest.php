@@ -2,7 +2,7 @@
 /**
  * Cookie Test Suite - This is the TestCase class for CookieHandler
  *
- * @author Salvatore Q Zeroastro <zeroastro@gmail.com>
+ * @author Salvo Quaranta (Zeroastro) <salvoquaranta@gmail.com>
  *
  * @group sqz-cookie-handler-test
  */

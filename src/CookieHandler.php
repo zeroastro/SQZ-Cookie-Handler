@@ -3,7 +3,7 @@
  * This is the Cookie Handler class.
  * This class uses OpenSSL to encrypt/decrypt the cookies value.
  *
- * @author Salvatore Q Zeroastro <zeroastro@gmail.com>
+ * @author Salvo Quaranta (Zeroastro) <salvoquaranta@gmail.com>
  * @copyright MIT License
  * @license https://github.com/zeroastro/SQZ-Cookie-Handler/blob/master/LICENSE
  */
