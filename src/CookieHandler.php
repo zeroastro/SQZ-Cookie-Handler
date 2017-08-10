@@ -95,6 +95,9 @@ class CookieHandler
      */
     public function removeCookie($cookie_name)
     {
-        return setcookie($cookie_name, 'deleted', 1, '/');
+        if (isset($_COOKIE[$cookie_name])) {
+            unset($_COOKIE[$cookie_name]);
+            return setcookie($cookie_name, 'deleted', 1, '/');
+        }
     }
 }
