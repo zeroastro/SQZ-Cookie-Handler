@@ -58,7 +58,7 @@ class CookieHandler
             ? $this->security->encrypt($cookie->getJSON())
             : $cookie->getJSON();
 
-        return \setcookie(
+        return setcookie(
             $cookie->getName(),
             $value,
             $cookie->getExpires(),
