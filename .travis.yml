@@ -3,14 +3,9 @@ language: php
 
 # Choose the PHP Version to test
 php:
-  - '5.5'
   - '5.6'
   - '7.0'
   - '7.1'
-
-matrix:
-  allow_failures:
-    - php: 5.5
 
 # Initialization
 before_script:

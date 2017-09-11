@@ -1,5 +1,6 @@
 # SQZ Cookie Handler
 [![Build Status](https://travis-ci.org/zeroastro/SQZ-Cookie-Handler.svg?branch=master)](https://travis-ci.org/zeroastro/SQZ-Cookie-Handler)
+[![Coverage Status](https://coveralls.io/repos/github/zeroastro/SQZ-Cookie-Handler/badge.svg)](https://coveralls.io/github/zeroastro/SQZ-Cookie-Handler)
 
 ## About
 This is a Simple yet useful PHP Cookie Handler which uses the OpenSSL extension to perform data encryption/decryption.
