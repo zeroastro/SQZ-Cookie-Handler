@@ -14,16 +14,17 @@
         "php": ">=5.5"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.8 || ^5.0"
+        "phpunit/phpunit": "^5.0",
+        "php-coveralls/php-coveralls": "^2.0"
     },
     "autoload": {
         "psr-4": {
-            "SQZ_CookieHandler\\": "src/"
+            "SqzCookieHandler\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "SQZ_CookieHandler_Test\\": "tests/"
+            "SqzCookieHandlerTests\\": "tests/"
         }
     },
     "scripts": {

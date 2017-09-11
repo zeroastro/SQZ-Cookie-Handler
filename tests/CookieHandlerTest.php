@@ -7,11 +7,11 @@
  * @group sqz-cookie-handler-test
  */
 
-namespace SQZ_CookieHandler_Test;
+namespace SqzCookieHandlerTests\CookieHandler;
 
-use \SQZ_CookieHandler\Cookie;
-use \SQZ_CookieHandler\CookieHandler;
-use \SQZ_CookieHandler\SimpleSecurity;
+use SqzCookieHandler\Cookie;
+use SqzCookieHandler\CookieHandler;
+use SqzCookieHandler\SimpleSecurity;
 
 class CookieHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -72,6 +72,16 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
     }       
 
     /**
+     * Test the removeCookie() function
+     *
+     * @runInSeparateProcess
+     */
+    public function testRemoveCookieNonExistant()
+    {
+        $this->assertFalse($this->cookieHandler->removeCookie('i-dont-exist'));
+    } 
+
+    /**
      * Test the Constructor using encryption key
      *
      * @requires extension openssl
@@ -79,6 +89,17 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
     public function testConstructorSecure()
     {
         $this->assertInstanceOf(CookieHandler::class, $this->cookieHandlerSecure);
+    }
+
+    /**
+     * Test the Constructor using invalid encryption key
+     *
+     * @requires extension openssl
+     * @expectedException \InvalidArgumentException
+     */
+    public function testConstructorSecureInvalidKey()
+    {
+        $cookieHandlerSecure = new CookieHandler(['invalid-key']);
     }
 
      /**
@@ -89,7 +110,7 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
       */
     public function testSaveCookieSecure()
     {
-        $this->assertTrue($this->cookieHandlerSecure->saveCookie($this->cookie, true));
+        $this->assertTrue($this->cookieHandlerSecure->saveCookie($this->cookie));
     } 
 
     /**
@@ -104,7 +125,7 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
             'testName' => 'vBHcIedwCAgamuWDIMnVPBmAWoHuuN0mdD/apccBzPsOAkhZuYM5UQ/QJkplCKdIRa6aWsNsPjQpumTb41zaPkOd2usbGgyWKFCe93Mm2v2C03JXnSNTRv+WfuUpnAnsS+zbAnBdUbbQDk8gFs0oxgqXZhP9rc5nNzggYrXqthg='
         ];
 
-        $cookie = $this->cookieHandlerSecure->getCookie('testName', true);
+        $cookie = $this->cookieHandlerSecure->getCookie('testName');
 
         $this->assertInstanceOf(Cookie::class, $cookie);
         $this->assertEquals('testValue', $cookie->getValue());

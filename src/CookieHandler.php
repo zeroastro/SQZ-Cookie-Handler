@@ -1,14 +1,13 @@
 <?php
 /** 
  * This is the Cookie Handler class.
- * This class uses OpenSSL to encrypt/decrypt the cookies value.
  *
  * @author Salvo Quaranta (Zeroastro) <salvoquaranta@gmail.com>
  * @copyright MIT License
  * @license https://github.com/zeroastro/SQZ-Cookie-Handler/blob/master/LICENSE
  */
  
-namespace SQZ_CookieHandler;
+namespace SqzCookieHandler;
 
 class CookieHandler
 {
@@ -34,33 +33,22 @@ class CookieHandler
     public function __construct($key = null)
     {
         if (!empty($key)) {
-            try {
-                $this->security = new SimpleSecurity($key);
-            } catch (\Exception $e) {
-                error_log('SQZ Cookie Handler Error: ' . $e->getMessage());
-                printf('SQZ Cookie Handler Error: ' . $e->getMessage());
-                $key = null;
-            }
-        }
-
-        $this->key = $key;
+            $this->security = new SimpleSecurity($key);
+            $this->key = $key;
+        }      
     }
 
     /**
      * This is a wrapper function for the native php setcookie() function.
      *
-     * @param Cookie $cookie The cookie, rapresented as SQZ_CookieHandler\Cookie class
+     * @param Cookie $cookie The cookie, rapresented as Cookie class
      * @return bool
      */
-    public function saveCookie(Cookie $cookie, $encrypt = false)
+    public function saveCookie(Cookie $cookie)
     {
-        $value = ((true === $encrypt) && !empty($this->key))
-            ? $this->security->encrypt($cookie->getJSON())
-            : $cookie->getJSON();
-
         return setcookie(
             $cookie->getName(),
-            $value,
+            !empty($this->key) ? $this->security->encrypt($cookie->getJSON()) : $cookie->getJSON(),
             $cookie->getExpires(),
             $cookie->getPath(),
             $cookie->isSecure(),
@@ -71,18 +59,18 @@ class CookieHandler
     /**
      * Whether it exists, return the Cookie 
      *
-     * @param string $cookieName The name of the cookie to retrieve
+     * @param string $cookie_name The name of the cookie to retrieve
      * @return Cookie|null
      */
-    public function getCookie($cookie_name, $decrypt = false)
+    public function getCookie($cookie_name)
     {
         if (empty($_COOKIE[$cookie_name])) {
             return null;
         }
 
-        $cookie_json = ((true === $decrypt) && !empty($this->key))
-            ? $this->security->decrypt($_COOKIE[$cookie_name])
-            : $_COOKIE[$cookie_name];
+        $cookie_json = !empty($this->key) ? 
+            $this->security->decrypt($_COOKIE[$cookie_name]) : 
+            $_COOKIE[$cookie_name];
 
         return Cookie::createFromJSON($cookie_json);
     }
@@ -90,14 +78,17 @@ class CookieHandler
     /**
      * Removes a cookie using the native php setcookie() function
      *
-     * @param string $cookieName The name of the cookie to remove
+     * @param string $cookie_name The name of the cookie to remove
      * @return bool
      */
     public function removeCookie($cookie_name)
     {
         if (isset($_COOKIE[$cookie_name])) {
             unset($_COOKIE[$cookie_name]);
+            
             return setcookie($cookie_name, 'deleted', 1, '/');
         }
+
+        return false;
     }
 }

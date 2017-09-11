@@ -7,7 +7,7 @@
  * @license https://github.com/zeroastro/SQZ-Cookie-Handler/blob/master/LICENSE
  */
  
-namespace SQZ_CookieHandler;
+namespace SqzCookieHandler;
 
 class Cookie
 {
@@ -26,9 +26,9 @@ class Cookie
     protected $value;
 
     /**
-     * The expire time of the cookie
+     * The expiration time of the cookie
      *
-     * @var string
+     * @var int
      */
     protected $expire;
 
@@ -58,7 +58,7 @@ class Cookie
      *
      * @var bool
      */
-    protected $httpOnly;
+    protected $http_only;
 
     /**
      * Cookie Constructor Method
@@ -102,13 +102,13 @@ class Cookie
         }
 
         // Values assignment
-        $this->name     = $name;
-        $this->value    = $value;
-        $this->expire   = (int) $expire;
-        $this->path     = !is_null($path) ? $path : '/';
-        $this->domain   = $domain;
-        $this->secure   = !is_null($secure) ? (bool) $secure : false;
-        $this->httpOnly = !is_null($http_only) ? (bool) $http_only : true;
+        $this->name = $name;
+        $this->value = $value;
+        $this->expire = (int) $expire;
+        $this->path = !is_null($path) ? $path : '/';
+        $this->domain = $domain;
+        $this->secure = !is_null($secure) ? (bool) $secure : false;
+        $this->http_only = !is_null($http_only) ? (bool) $http_only : true;
     }
 
     /**
@@ -128,7 +128,7 @@ class Cookie
             isset($cookie_obj->path) ? $cookie_obj->path : '/',
             isset($cookie_obj->domain) ? $cookie_obj->domain : null,
             isset($cookie_obj->secure) ? $cookie_obj->secure : false,
-            isset($cookie_obj->httpOnly) ? $cookie_obj->httpOnly : true
+            isset($cookie_obj->http_only) ? $cookie_obj->http_only : true
         );
     }
 
@@ -199,7 +199,7 @@ class Cookie
      */
     public function isHttpOnly()
     {
-        return (bool) $this->httpOnly;
+        return (bool) $this->http_only;
     }
 
     /**
@@ -226,7 +226,7 @@ class Cookie
             'path' => $this->getPath(),
             'domain' => $this->getDomain(),
             'secure' => $this->isSecure(),
-            'httpOnly' => $this->isHttpOnly()
+            'http_only' => $this->isHttpOnly()
         ];
 
         return json_encode($cookie_array);
