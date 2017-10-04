@@ -7,7 +7,7 @@
  * @license https://github.com/zeroastro/SQZ-Cookie-Handler/blob/master/LICENSE
  */
  
-namespace SqzCookieHandler;
+namespace Sqz\CookieHandler;
 
 class Cookie
 {

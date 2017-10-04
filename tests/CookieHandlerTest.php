@@ -7,11 +7,11 @@
  * @group sqz-cookie-handler-test
  */
 
-namespace SqzCookieHandlerTests\CookieHandler;
+namespace Sqz\CookieHandler\Tests\CookieHandler;
 
-use SqzCookieHandler\Cookie;
-use SqzCookieHandler\CookieHandler;
-use SqzCookieHandler\SimpleSecurity;
+use Sqz\CookieHandler\Cookie;
+use Sqz\CookieHandler\CookieHandler;
+use Sqz\CookieHandler\SimpleSecurity;
 
 class CookieHandlerTest extends \PHPUnit_Framework_TestCase
 {

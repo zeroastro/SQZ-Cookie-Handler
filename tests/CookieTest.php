@@ -7,9 +7,9 @@
  * @group sqz-cookie-handler-test
  */
 
-namespace SqzCookieHandlerTests\CookieHandler;
+namespace Sqz\CookieHandler\Tests\CookieHandler;
 
-use SqzCookieHandler\Cookie;
+use Sqz\CookieHandler\Cookie;
 
 class CookieTest extends \PHPUnit_Framework_TestCase
 {

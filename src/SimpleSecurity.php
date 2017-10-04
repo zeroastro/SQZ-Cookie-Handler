@@ -9,7 +9,7 @@
  * @copyright MIT License
  */
 
-namespace SqzCookieHandler;
+namespace Sqz\CookieHandler;
 
 class SimpleSecurity
 {
