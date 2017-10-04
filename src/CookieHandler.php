@@ -1,5 +1,5 @@
 <?php
-/** 
+/**
  * This is the Cookie Handler class.
  *
  * @author Salvo Quaranta (Zeroastro) <salvoquaranta@gmail.com>
@@ -12,13 +12,13 @@ namespace Sqz\CookieHandler;
 class CookieHandler
 {
     /**
-     * Encryption Key 
+     * Encryption Key
      *
-     * @var string 
+     * @var string
      */
     protected $key;
 
-    /** 
+    /**
      * Encryption Class
      *
      * @var SimpleSecurity
@@ -35,7 +35,7 @@ class CookieHandler
         if (!empty($key)) {
             $this->security = new SimpleSecurity($key);
             $this->key = $key;
-        }      
+        }
     }
 
     /**
@@ -57,7 +57,7 @@ class CookieHandler
     }
 
     /**
-     * Whether it exists, return the Cookie 
+     * Whether it exists, return the Cookie
      *
      * @param string $cookie_name The name of the cookie to retrieve
      * @return Cookie|null
@@ -68,8 +68,8 @@ class CookieHandler
             return null;
         }
 
-        $cookie_json = !empty($this->key) ? 
-            $this->security->decrypt($_COOKIE[$cookie_name]) : 
+        $cookie_json = !empty($this->key) ?
+            $this->security->decrypt($_COOKIE[$cookie_name]) :
             $_COOKIE[$cookie_name];
 
         return Cookie::createFromJSON($cookie_json);
