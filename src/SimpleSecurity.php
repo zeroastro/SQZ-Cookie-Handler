@@ -1,5 +1,5 @@
 <?php
-/** 
+/**
  * Utility class to perform simple data encryption/decryption
  * This class has been modified for the current project
  *
@@ -14,9 +14,9 @@ namespace Sqz\CookieHandler;
 class SimpleSecurity
 {
     /**
-     * Encryption Key 
+     * Encryption Key
      *
-     * @var string 
+     * @var string
      */
     protected $key;
 
@@ -27,10 +27,10 @@ class SimpleSecurity
      */
     protected $iv_size;
 
-    /** 
+    /**
      * Encryption Method
      *
-     * @var string 
+     * @var string
      */
     const ENCRYPTION_METHOD = 'AES-256-CBC';
 
@@ -69,10 +69,10 @@ class SimpleSecurity
     {
         $iv = openssl_random_pseudo_bytes($this->iv_size);
         $encrypted = openssl_encrypt(
-            $data, 
-            self::ENCRYPTION_METHOD, 
-            $this->key, 
-            OPENSSL_RAW_DATA, 
+            $data,
+            self::ENCRYPTION_METHOD,
+            $this->key,
+            OPENSSL_RAW_DATA,
             $iv
         );
         
@@ -93,8 +93,8 @@ class SimpleSecurity
 
         return openssl_decrypt(
             $encrypted,
-            self::ENCRYPTION_METHOD, 
-            $this->key, 
+            self::ENCRYPTION_METHOD,
+            $this->key,
             OPENSSL_RAW_DATA,
             $iv
         );

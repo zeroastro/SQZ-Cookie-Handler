@@ -1,5 +1,5 @@
 <?php
-/** 
+/**
  * This Class represents a cookie.
  *
  * @author Salvo Quaranta (Zeroastro) <salvoquaranta@gmail.com>
@@ -88,13 +88,13 @@ class Cookie
 
         // DateTime Conversion
         switch (true) {
-            case ($expire instanceof \DateTimeInterface) :
+            case ($expire instanceof \DateTimeInterface):
                 $expire = $expire->format('U');
                 break;
             case (is_null($expire)):
                 $expire = 0;
                 break;
-            case (!is_numeric($expire)) :
+            case (!is_numeric($expire)):
                 $expire = strtotime($expire);
         }
         if (false === $expire) {

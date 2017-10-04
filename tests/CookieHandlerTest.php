@@ -30,7 +30,7 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructor()
     {
-         $this->assertInstanceOf(CookieHandler::class, $this->cookieHandler);
+        $this->assertInstanceOf(CookieHandler::class, $this->cookieHandler);
     }
 
     /**
@@ -50,7 +50,7 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $_COOKIE = [
             'testName' => json_encode([
-                'name' => 'testName', 
+                'name' => 'testName',
                 'value' => 'testValue'
             ])
         ];
@@ -59,7 +59,7 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(Cookie::class, $cookie);
         $this->assertEquals('testValue', $cookie->getValue());
-    } 
+    }
 
     /**
      * Test the removeCookie() function
@@ -69,7 +69,7 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
     public function testRemoveCookie()
     {
         $this->assertTrue($this->cookieHandler->removeCookie($this->cookie->getName()));
-    }       
+    }
 
     /**
      * Test the removeCookie() function
@@ -79,7 +79,7 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
     public function testRemoveCookieNonExistant()
     {
         $this->assertFalse($this->cookieHandler->removeCookie('i-dont-exist'));
-    } 
+    }
 
     /**
      * Test the Constructor using encryption key
@@ -102,16 +102,16 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
         $cookieHandlerSecure = new CookieHandler(['invalid-key']);
     }
 
-     /**
-      * Test the saveCookie() function with encryption
-      *
-      * @requires extension openssl
-      * @runInSeparateProcess
-      */
+    /**
+     * Test the saveCookie() function with encryption
+     *
+     * @requires extension openssl
+     * @runInSeparateProcess
+     */
     public function testSaveCookieSecure()
     {
         $this->assertTrue($this->cookieHandlerSecure->saveCookie($this->cookie));
-    } 
+    }
 
     /**
      * Test the getCookie() function with decryption
