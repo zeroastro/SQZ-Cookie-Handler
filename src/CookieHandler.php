@@ -30,12 +30,13 @@ class CookieHandler
      *
      * @param string $key The Encryption Key. If null, the security class won't be created
      */
-    public function __construct($key = null)
+    public function __construct(string $key = null)
     {
-        if (!empty($key)) {
+        if ($key) {
             $this->security = new SimpleSecurity($key);
             $this->key = $key;
         }
+     
     }
 
     /**
