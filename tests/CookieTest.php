@@ -1,4 +1,8 @@
-<?php
+<?php namespace Sqz\CookieHandler\Tests\CookieHandler;
+
+use Sqz\CookieHandler\Cookie;
+use PHPUnit\Framework\TestCase;
+
 /**
  * Cookie Test Suite - This is the TestCase class for Cookie
  *
@@ -6,29 +10,34 @@
  *
  * @group sqz-cookie-handler-test
  */
-
-namespace Sqz\CookieHandler\Tests\CookieHandler;
-
-use Sqz\CookieHandler\Cookie;
-
-class CookieTest extends \PHPUnit_Framework_TestCase
+class CookieTest extends TestCase
 {
+    /**
+     * @var Cookie
+     */
+    protected $cookie;
+
+    /**
+     * @var array
+     */
+    protected $cookieArray;
+
     /**
      * Setup the Cookie Variable for Testing
      */
     public function setUp()
     {
-        $cookieArray = [
+        $this->cookieArray = [
             'name' => 'testName',
             'value' => 'testValue',
-            'expire' => 65535,
+            'expiration' => 65535,
             'path' => 'testPath',
             'domain' => 'testDomain',
             'secure' => true,
             'httpOnly' => true
         ];
 
-        $this->cookie = Cookie::createFromJSON(json_encode($cookieArray));
+        $this->cookie = Cookie::createFromJSON(json_encode($this->cookieArray));
     }
 
     /**
@@ -36,61 +45,26 @@ class CookieTest extends \PHPUnit_Framework_TestCase
      *
      * @expectedException \InvalidArgumentException
      */
-    public function testConstructorWithEmptyName()
+    public function testConstructorWithEmptyNameThrowsException()
     {
-        $cookie = new Cookie('');
-    }
-
-    /**
-     * Test constructor without value
-     *
-     * @expectedException \InvalidArgumentException
-     */
-    public function testConstructorWithoutValue()
-    {
-        $cookie = new Cookie('name');
-    }
-
-    /**
-     * Test constructor with invalid expires
-     *
-     * @expectedException \InvalidArgumentException
-     */
-    public function testConstructorWithInvalidExpires()
-    {
-        $cookie = new Cookie('name', 'value', false);
+        $cookie = new Cookie('', 'value');
     }
 
     /**
      * Test the constructor
      */
-    public function testConstructor()
+    public function testConstructorDefaultValues()
     {
         $cookie = new Cookie('name', 'value');
+
         $this->assertInstanceOf(Cookie::class, $cookie);
-    }
-
-    /**
-     * Test the costruction with a DateTime Object as Expires Time
-     */
-    public function testCookieWithDateTimeExpires()
-    {
-        $expireDT = new \DateTime();
-        $cookie = new Cookie('name', 'value', $expireDT);
-
-        $this->assertEquals($expireDT->format('U'), $cookie->getExpires());
-    }
-
-    /**
-     * Test the costruction with a string as Expires Time
-     */
-    public function testCookieWithStringExpires()
-    {
-        $expireString = '+1 day';
-        $expire = strtotime($expireString);
-        $cookie = new Cookie('name', 'value', $expireString);
-
-        $this->assertEquals($expire, $cookie->getExpires());
+        $this->assertEquals('name', $cookie->getName());
+        $this->assertEquals('value', $cookie->getValue());
+        $this->assertEquals(0, $cookie->getExpiration());
+        $this->assertEquals('/', $cookie->getPath());
+        $this->assertEquals('', $cookie->getDomain());
+        $this->assertFalse($cookie->isSecure());
+        $this->assertTrue($cookie->isHttpOnly());
     }
 
     /**
@@ -98,7 +72,7 @@ class CookieTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetName()
     {
-        $this->assertEquals($this->cookie->getName(), 'testName');
+        $this->assertEquals('testName', $this->cookie->getName());
     }
 
     /**
@@ -106,15 +80,15 @@ class CookieTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetValue()
     {
-        $this->assertEquals($this->cookie->getValue(), 'testValue');
+        $this->assertEquals('testValue', $this->cookie->getValue());
     }
 
     /**
-     * Test getExpires()
+     * Test getExpiration()
      */
-    public function testGetExpires()
+    public function testGetExpiration()
     {
-        $this->assertEquals($this->cookie->getExpires(), 65535);
+        $this->assertEquals(65535, $this->cookie->getexpiration());
     }
 
     /**
@@ -130,7 +104,7 @@ class CookieTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetPath()
     {
-        $this->assertEquals($this->cookie->getPath(), 'testPath');
+        $this->assertEquals('testPath', $this->cookie->getPath());
     }
 
     /**
@@ -138,7 +112,7 @@ class CookieTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDomain()
     {
-        $this->assertEquals($this->cookie->getDomain(), 'testDomain');
+        $this->assertEquals('testDomain', $this->cookie->getDomain());
     }
 
     /**
@@ -154,6 +128,14 @@ class CookieTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsHttpOnly()
     {
-        $this->assertTrue($this->cookie->isSecure());
+        $this->assertTrue($this->cookie->isHttpOnly());
+    }
+
+    /**
+     * Test getJSON()
+     */
+    public function testGetJSON()
+    {
+        $this->assertSame(json_encode($this->cookieArray), $this->cookie->getJSON());
     }
 }

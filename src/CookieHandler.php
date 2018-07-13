@@ -1,55 +1,54 @@
 <?php
+
+namespace Sqz\CookieHandler;
+
 /**
  * This is the Cookie Handler class.
  *
  * @author Salvo Quaranta (Zeroastro) <salvoquaranta@gmail.com>
+ *
  * @copyright MIT License
- * @license https://github.com/zeroastro/SQZ-Cookie-Handler/blob/master/LICENSE
+ *
+ * @license https://github.com/zeroastro/sqz-cookie-handler/blob/master/LICENSE
  */
- 
-namespace Sqz\CookieHandler;
-
 class CookieHandler
 {
     /**
-     * Encryption Key
+     * Cryptography Class
      *
-     * @var string
+     * @var CryptographerInterface
      */
-    protected $key;
+    protected $cryptographer;
 
     /**
-     * Encryption Class
+     * CookieHandler constructor.
      *
-     * @var SimpleSecurity
+     * @param CryptographerInterface|null $cryptographer
      */
-    protected $security;
-
-    /**
-     * The CookieHandler Constructor
-     *
-     * @param string $key The Encryption Key. If null, the security class won't be created
-     */
-    public function __construct($key = null)
+    public function __construct(CryptographerInterface $cryptographer = null)
     {
-        if (!empty($key)) {
-            $this->security = new SimpleSecurity($key);
-            $this->key = $key;
+        if ($cryptographer instanceof CryptographerInterface) {
+            $this->cryptographer = $cryptographer;
         }
     }
 
     /**
      * This is a wrapper function for the native php setcookie() function.
      *
-     * @param Cookie $cookie The cookie, rapresented as Cookie class
+     * @param Cookie $cookie The cookie, represented as Cookie class
+     *
      * @return bool
      */
-    public function saveCookie(Cookie $cookie)
+    public function saveCookie(Cookie $cookie): bool
     {
+        $value = !is_null($this->cryptographer)
+            ? $this->cryptographer->encrypt($cookie->getJSON())
+            : $cookie->getJSON();
+
         return setcookie(
             $cookie->getName(),
-            !empty($this->key) ? $this->security->encrypt($cookie->getJSON()) : $cookie->getJSON(),
-            $cookie->getExpires(),
+            $value,
+            $cookie->getExpiration(),
             $cookie->getPath(),
             $cookie->isSecure(),
             $cookie->isHttpOnly()
@@ -59,34 +58,36 @@ class CookieHandler
     /**
      * Whether it exists, return the Cookie
      *
-     * @param string $cookie_name The name of the cookie to retrieve
+     * @param string $cookieName The name of the cookie to retrieve
+     *
      * @return Cookie|null
      */
-    public function getCookie($cookie_name)
+    public function getCookie($cookieName)
     {
-        if (empty($_COOKIE[$cookie_name])) {
+        if (empty($_COOKIE[$cookieName])) {
             return null;
         }
 
-        $cookie_json = !empty($this->key) ?
-            $this->security->decrypt($_COOKIE[$cookie_name]) :
-            $_COOKIE[$cookie_name];
+        $cookieJSON = !is_null($this->cryptographer)
+            ? $this->cryptographer->decrypt($_COOKIE[$cookieName])
+            : $_COOKIE[$cookieName];
 
-        return Cookie::createFromJSON($cookie_json);
+        return Cookie::createFromJSON($cookieJSON);
     }
 
     /**
      * Removes a cookie using the native php setcookie() function
      *
-     * @param string $cookie_name The name of the cookie to remove
+     * @param string $cookieName The name of the cookie to remove
+     *
      * @return bool
      */
-    public function removeCookie($cookie_name)
+    public function removeCookie($cookieName): bool
     {
-        if (isset($_COOKIE[$cookie_name])) {
-            unset($_COOKIE[$cookie_name]);
+        if (isset($_COOKIE[$cookieName])) {
+            unset($_COOKIE[$cookieName]);
             
-            return setcookie($cookie_name, 'deleted', 1, '/');
+            return setcookie($cookieName, 'deleted', 1, '/');
         }
 
         return false;

@@ -1,4 +1,12 @@
 <?php
+
+namespace Sqz\CookieHandler\Tests\CookieHandler;
+
+use PHPUnit\Framework\TestCase;
+use Sqz\CookieHandler\Cookie;
+use Sqz\CookieHandler\CookieHandler;
+use Sqz\CookieHandler\CryptographerInterface;
+
 /**
  * Cookie Test Suite - This is the TestCase class for CookieHandler
  *
@@ -6,31 +14,55 @@
  *
  * @group sqz-cookie-handler-test
  */
-
-namespace Sqz\CookieHandler\Tests\CookieHandler;
-
-use Sqz\CookieHandler\Cookie;
-use Sqz\CookieHandler\CookieHandler;
-use Sqz\CookieHandler\SimpleSecurity;
-
-class CookieHandlerTest extends \PHPUnit_Framework_TestCase
+class CookieHandlerTest extends TestCase
 {
+    /**
+     * @var CookieHandler
+     */
+    protected $cookieHandler;
+
+    /**
+     * @var CookieHandler
+     */
+    protected $cookieHandlerSecure;
+
+    /**
+     * @var CryptographerInterface
+     */
+    protected $cryptographer;
+
+    /**
+     * @var Cookie
+     */
+    protected $cookie;
+
     /**
      * Setup the Cookie Handler Variable for Testing
      */
     public function setUp()
     {
-        $this->cookieHandler = new CookieHandler();
-        $this->cookieHandlerSecure = new CookieHandler('testKeyForEncryption');
         $this->cookie = new Cookie('testName', 'testValue');
+
+        $this->cryptographer = $this->createMock(CryptographerInterface::class);
+
+        $this->cookieHandler = new CookieHandler();
+        $this->cookieHandlerSecure = new CookieHandler($this->cryptographer);
     }
 
     /**
      * Test the Constructor
      */
-    public function testConstructor()
+    public function testConstructorWithoutCryptographer()
     {
         $this->assertInstanceOf(CookieHandler::class, $this->cookieHandler);
+    }
+
+    /**
+     * Test the Constructor
+     */
+    public function testConstructorWithCryptographer()
+    {
+        $this->assertInstanceOf(CookieHandler::class, $this->cookieHandlerSecure);
     }
 
     /**
@@ -38,7 +70,7 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
      *
      * @runInSeparateProcess
      */
-    public function testSaveCookie()
+    public function testSaveCookieWithoutCryptographerReturnsTrue()
     {
         $this->assertTrue($this->cookieHandler->saveCookie($this->cookie));
     }
@@ -46,7 +78,7 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * Test the getCookie() function
      */
-    public function testGetCookie()
+    public function testGetCookieWithoutCryptographerReturnsTheCookie()
     {
         $_COOKIE = [
             'testName' => json_encode([
@@ -62,11 +94,21 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test the getCookie() function with an empty value
+     */
+    public function testGetCookieReturnsNullIfCookieDoesNotExist()
+    {
+        $cookie = $this->cookieHandler->getCookie('IDontExist');
+
+        $this->assertNull($cookie);
+    }
+
+    /**
      * Test the removeCookie() function
      *
      * @runInSeparateProcess
      */
-    public function testRemoveCookie()
+    public function testRemoveCookieReturnsTrueWhenCookieExists()
     {
         $this->assertTrue($this->cookieHandler->removeCookie($this->cookie->getName()));
     }
@@ -76,30 +118,9 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
      *
      * @runInSeparateProcess
      */
-    public function testRemoveCookieNonExistant()
+    public function testRemoveCookieReturnsFalseWhenCookieDoesNotExist()
     {
         $this->assertFalse($this->cookieHandler->removeCookie('i-dont-exist'));
-    }
-
-    /**
-     * Test the Constructor using encryption key
-     *
-     * @requires extension openssl
-     */
-    public function testConstructorSecure()
-    {
-        $this->assertInstanceOf(CookieHandler::class, $this->cookieHandlerSecure);
-    }
-
-    /**
-     * Test the Constructor using invalid encryption key
-     *
-     * @requires extension openssl
-     * @expectedException \InvalidArgumentException
-     */
-    public function testConstructorSecureInvalidKey()
-    {
-        $cookieHandlerSecure = new CookieHandler(['invalid-key']);
     }
 
     /**
@@ -108,8 +129,10 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
      * @requires extension openssl
      * @runInSeparateProcess
      */
-    public function testSaveCookieSecure()
+    public function testSaveCookieWithCryptographerReturnsTrue()
     {
+        $this->cryptographer->method('encrypt')->willReturn('test-cookie-value-encrypted');
+
         $this->assertTrue($this->cookieHandlerSecure->saveCookie($this->cookie));
     }
 
@@ -118,26 +141,26 @@ class CookieHandlerTest extends \PHPUnit_Framework_TestCase
      *
      * @requires extension openssl
      */
-    public function testGetCookieSecure()
+    public function testGetCookieWithCryptographerReturnsTheCookie()
     {
-        /* original value is 'testValue' */
         $_COOKIE = [
-            'testName' => 'vBHcIedwCAgamuWDIMnVPBmAWoHuuN0mdD/apccBzPsOAkhZuYM5UQ/QJkplCKdIRa6aWsNsPjQpumTb41zaPkOd2usbGgyWKFCe93Mm2v2C03JXnSNTRv+WfuUpnAnsS+zbAnBdUbbQDk8gFs0oxgqXZhP9rc5nNzggYrXqthg='
+            'testName' => 'test-cookie-value-encrypted'
         ];
+
+        $expected = 'test-cookie-value-decrypted';
+
+        $returned = json_encode(
+            [
+                'name' => 'testName',
+                'value' => $expected
+            ]
+        );
+
+        $this->cryptographer->method('decrypt')->willReturn($returned);
 
         $cookie = $this->cookieHandlerSecure->getCookie('testName');
 
         $this->assertInstanceOf(Cookie::class, $cookie);
-        $this->assertEquals('testValue', $cookie->getValue());
-    }
-
-    /**
-     * Test the getCookie() function with an empty value
-     */
-    public function testGetCookieEmpty()
-    {
-        $cookie = $this->cookieHandler->getCookie('IDontExist');
-
-        $this->assertNull($cookie);
+        $this->assertEquals($expected, $cookie->getValue());
     }
 }
