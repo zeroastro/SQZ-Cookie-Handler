@@ -3,7 +3,9 @@
 namespace Sqz\CookieHandler\Tests\CookieHandler;
 
 use PHPUnit\Framework\TestCase;
-use Sqz\CookieHandler\{Cookie, CookieHandler, CryptographerInterface};
+use Sqz\CookieHandler\Cookie;
+use Sqz\CookieHandler\CookieHandler;
+use Sqz\CookieHandler\CryptographerInterface;
 
 /**
  * Cookie Test Suite - This is the TestCase class for CookieHandler

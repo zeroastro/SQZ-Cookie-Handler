@@ -3,7 +3,6 @@ language: php
 
 # Choose the PHP Version to test
 php:
-  - '7.0'
   - '7.1'
   - '7.2'
 
