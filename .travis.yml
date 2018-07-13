@@ -3,9 +3,9 @@ language: php
 
 # Choose the PHP Version to test
 php:
-  - '5.6'
   - '7.0'
   - '7.1'
+  - '7.2'
 
 # Initialization
 before_script:
@@ -13,8 +13,7 @@ before_script:
   - composer install --no-interaction
 
 # Script Execution
-script: 
-  - mkdir -p tests/code-coverage
+script:
   - ./vendor/bin/phpunit
 
 after_success:

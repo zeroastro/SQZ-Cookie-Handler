@@ -1,14 +1,18 @@
 <?php
-/**
- * This Class represents a cookie.
- *
- * @author Salvo Quaranta (Zeroastro) <salvoquaranta@gmail.com>
- * @copyright MIT License
- * @license https://github.com/zeroastro/SQZ-Cookie-Handler/blob/master/LICENSE
- */
- 
+
 namespace Sqz\CookieHandler;
 
+use InvalidArgumentException;
+
+/**
+ * This Class represents a cookie
+ *
+ * @author Salvo Quaranta (Zeroastro) <salvoquaranta@gmail.com>
+ *
+ * @copyright MIT License
+ *
+ * @license https://github.com/zeroastro/aqz-cookie-handler/blob/master/LICENSE
+ */
 class Cookie
 {
     /**
@@ -30,7 +34,7 @@ class Cookie
      *
      * @var int
      */
-    protected $expire;
+    protected $expiration;
 
     /**
      * The path of the cookie
@@ -58,78 +62,78 @@ class Cookie
      *
      * @var bool
      */
-    protected $http_only;
+    protected $httpOnly;
 
     /**
      * Cookie Constructor Method
      *
-     * @param string                 $name     The name of the cookie
-     * @param string                 $value    The value of the cookie
-     * @param int|\DateTimeInterface $expire   The expires time of the cookie
-     * @param string                 $path     The path of the cookie
-     * @param string                 $domain   The domain of the cookie
-     * @param bool                   $secure   True when the cookie can be transmitted only via HTTPS
-     * @param bool                   $httpOnly True if the cookie can be accessible only via HTTP protocol
-     *
-     * @throws \InvalidArgumentException If the Name is empty
-     *                                   If the Value is null
-     *                                   If the Expiration time is not valid
+     * @param string $name    The name of the cookie
+     * @param string $value   The value of the cookie
+     * @param int $expiration The expire time of the cookie
+     * @param string $path    The path of the cookie
+     * @param string $domain  The domain of the cookie
+     * @param bool $secure    True when the cookie can be transmitted only via HTTPS
+     * @param bool $httpOnly  True if the cookie can be accessible only via HTTP protocol
      */
-    public function __construct($name, $value = null, $expire = null, $path = null, $domain = null, $secure = null, $http_only = null)
-    {
-        // Check if the Name is valid
-        if (empty($name)) {
-            throw new \InvalidArgumentException('Cookie Error: The cookie name cannot be empty.');
-        }
-
-        if (is_null($value)) {
-            throw new \InvalidArgumentException('Cookie Error: The cookie value cannot be empty.');
-        }
-
-        // DateTime Conversion
-        switch (true) {
-            case ($expire instanceof \DateTimeInterface):
-                $expire = $expire->format('U');
-                break;
-            case (is_null($expire)):
-                $expire = 0;
-                break;
-            case (!is_numeric($expire)):
-                $expire = strtotime($expire);
-        }
-        if (false === $expire) {
-            throw new \InvalidArgumentException('Cookie Error: Expiration time is not valid.');
-        }
-
-        // Values assignment
-        $this->name = $name;
-        $this->value = $value;
-        $this->expire = (int) $expire;
-        $this->path = !is_null($path) ? $path : '/';
-        $this->domain = $domain;
-        $this->secure = !is_null($secure) ? (bool) $secure : false;
-        $this->http_only = !is_null($http_only) ? (bool) $http_only : true;
+    public function __construct(
+        string $name,
+        string $value,
+        int $expiration = 0,
+        string $path = '/',
+        string $domain = '',
+        bool $secure = false,
+        bool $httpOnly = true
+    ) {
+        $this
+            ->setName($name)
+            ->setValue($value)
+            ->setExpiration($expiration)
+            ->setPath($path)
+            ->setDomain($domain)
+            ->setSecure($secure)
+            ->setHttpOnly($httpOnly);
     }
 
     /**
      * Create a cookie object using values from a json
      *
-     * @params string $cookie_json
+     * @param string $cookieJson
+     *
      * @return Cookie
      */
-    public static function createFromJSON($cookie_json)
+    public static function createFromJSON(string $cookieJson)
     {
-        $cookie_obj = json_decode($cookie_json);
+        $cookieObject = json_decode($cookieJson);
 
         return new static(
-            $cookie_obj->name,
-            $cookie_obj->value,
-            isset($cookie_obj->expire) ? $cookie_obj->expire : 0,
-            isset($cookie_obj->path) ? $cookie_obj->path : '/',
-            isset($cookie_obj->domain) ? $cookie_obj->domain : null,
-            isset($cookie_obj->secure) ? $cookie_obj->secure : false,
-            isset($cookie_obj->http_only) ? $cookie_obj->http_only : true
+            $cookieObject->name,
+            $cookieObject->value,
+            $cookieObject->expiration ?? 0,
+            $cookieObject->path ?? '/',
+            $cookieObject->domain ?? '',
+            $cookieObject->secure ?? false,
+            $cookieObject->httpOnly ?? true
         );
+    }
+
+    /**
+     * Set the name of the cookie
+     *
+     * @param string $name
+     *
+     * @return Cookie
+     *
+     * @throws InvalidArgumentException
+     */
+    public function setName(string $name)
+    {
+        if (empty($name)) {
+            throw new InvalidArgumentException('Cookie Error: The cookie name needs to be a valid string');
+        }
+
+        $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -137,19 +141,48 @@ class Cookie
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
+
+    /**
+     * Set the value of the cookie
+     *
+     * @param string $value
+     *
+     * @return Cookie
+     */
+    public function setValue(string $value)
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
 
     /**
      * Returns the value of the cookie
      *
      * @return string
      */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
+    }
+
+    /**
+     * Set the expiration time of the cookie
+     *
+     * @param int $expiration
+     *
+     * @return Cookie
+     */
+    public function setExpiration(int $expiration)
+    {
+        $this->expiration = $expiration;
+
+        return $this;
     }
 
     /**
@@ -157,9 +190,23 @@ class Cookie
      *
      * @return int
      */
-    public function getExpires()
+    public function getExpiration(): int
     {
-        return (int) $this->expire;
+        return $this->expiration;
+    }
+
+    /**
+     * Set the path of the cookie
+     *
+     * @param string $path
+     *
+     * @return Cookie
+     */
+    public function setPath(string $path)
+    {
+        $this->path = $path;
+
+        return $this;
     }
 
     /**
@@ -167,9 +214,23 @@ class Cookie
      *
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
+    }
+
+    /**
+     * Set the domain of the cookie
+     *
+     * @param string $domain
+     *
+     * @return Cookie
+     */
+    public function setDomain(string $domain)
+    {
+        $this->domain = $domain;
+
+        return $this;
     }
 
     /**
@@ -177,9 +238,23 @@ class Cookie
      *
      * @return string
      */
-    public function getDomain()
+    public function getDomain(): string
     {
         return $this->domain;
+    }
+
+    /**
+     * Set the secure flag of the cookie.
+     *
+     * @param bool $secure
+     *
+     * @return Cookie
+     */
+    public function setSecure(bool $secure)
+    {
+        $this->secure = $secure;
+
+        return $this;
     }
 
     /**
@@ -187,9 +262,23 @@ class Cookie
      *
      * @return bool
      */
-    public function isSecure()
+    public function isSecure(): bool
     {
-        return (bool) $this->secure;
+        return $this->secure;
+    }
+
+    /**
+     * Set the http only availability of the cookie
+     *
+     * @param bool $httpOnly
+     *
+     * @return Cookie
+     */
+    public function setHttpOnly(bool $httpOnly)
+    {
+        $this->httpOnly = $httpOnly;
+
+        return $this;
     }
 
     /**
@@ -197,9 +286,9 @@ class Cookie
      *
      * @return bool
      */
-    public function isHttpOnly()
+    public function isHttpOnly(): bool
     {
-        return (bool) $this->http_only;
+        return $this->httpOnly;
     }
 
     /**
@@ -207,28 +296,26 @@ class Cookie
      *
      * @return bool
      */
-    public function isExpired()
+    public function isExpired(): bool
     {
-        return $this->expire < time();
+        return $this->expiration < time();
     }
 
     /**
-     * Gets the JSON of the Cookie.
+     * Returns the JSON representing the Cookie.
      *
      * @return string
      */
-    public function getJSON()
+    public function getJSON(): string
     {
-        $cookie_array = [
+        return json_encode([
             'name' => $this->getName(),
             'value' => $this->getValue(),
-            'expire' => $this->getExpires(),
+            'expiration' => $this->getExpiration(),
             'path' => $this->getPath(),
             'domain' => $this->getDomain(),
             'secure' => $this->isSecure(),
-            'http_only' => $this->isHttpOnly()
-        ];
-
-        return json_encode($cookie_array);
+            'httpOnly' => $this->isHttpOnly()
+        ]);
     }
 }
