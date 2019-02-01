@@ -2,6 +2,8 @@
 
 namespace Sqz\CookieHandler;
 
+use Sqz\CookieHandler\Contracts\CryptographerInterface;
+
 /**
  * This is the Cookie Handler class.
  *
@@ -27,9 +29,7 @@ class CookieHandler
      */
     public function __construct(CryptographerInterface $cryptographer = null)
     {
-        if ($cryptographer instanceof CryptographerInterface) {
-            $this->cryptographer = $cryptographer;
-        }
+        $this->cryptographer = $cryptographer;
     }
 
     /**
@@ -41,7 +41,7 @@ class CookieHandler
      */
     public function saveCookie(Cookie $cookie): bool
     {
-        $value = !is_null($this->cryptographer)
+        $value = $this->isCryptographyEnabled()
             ? $this->cryptographer->encrypt($cookie->getJSON())
             : $cookie->getJSON();
 
@@ -68,7 +68,7 @@ class CookieHandler
             return null;
         }
 
-        $cookieJSON = !is_null($this->cryptographer)
+        $cookieJSON = $this->isCryptographyEnabled()
             ? $this->cryptographer->decrypt($_COOKIE[$cookieName])
             : $_COOKIE[$cookieName];
 
@@ -86,10 +86,20 @@ class CookieHandler
     {
         if (isset($_COOKIE[$cookieName])) {
             unset($_COOKIE[$cookieName]);
-            
+
             return setcookie($cookieName, 'deleted', 1, '/');
         }
 
         return false;
+    }
+
+    /**
+     * Returns whether the cryptography is enabled
+     *
+     * @return bool
+     */
+    protected function isCryptographyEnabled(): bool
+    {
+        return !is_null($this->cryptographer);
     }
 }

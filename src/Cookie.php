@@ -11,7 +11,7 @@ use InvalidArgumentException;
  *
  * @copyright MIT License
  *
- * @license https://github.com/zeroastro/aqz-cookie-handler/blob/master/LICENSE
+ * @license https://github.com/zeroastro/sqz-cookie-handler/blob/master/LICENSE
  */
 class Cookie
 {

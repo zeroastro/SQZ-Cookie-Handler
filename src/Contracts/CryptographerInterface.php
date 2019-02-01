@@ -1,6 +1,6 @@
 <?php
 
-namespace Sqz\CookieHandler;
+namespace Sqz\CookieHandler\Contracts;
 
 /**
  * Interface CryptographerInterface

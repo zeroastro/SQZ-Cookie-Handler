@@ -3,6 +3,7 @@
 namespace Sqz\CookieHandler;
 
 use InvalidArgumentException;
+use Sqz\CookieHandler\Contracts\CryptographerInterface;
 
 /**
  * Utility class to perform simple data encryption/decryption

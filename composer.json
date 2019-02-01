@@ -3,7 +3,7 @@
     "description": "This is a Simple PHP Cookie Handler which uses the OpenSSL extension to perform data encryption/decryption",
     "license": "MIT",
     "keywords": ["cookie", "cookie handler"],
-    "homepage": "https://github.com/zeroastro/SQZ-Cookie-Handler",
+    "homepage": "https://github.com/zeroastro/sqz-cookie-handler",
     "authors": [{
         "name": "Salvo Quaranta (Zeroastro)",
         "email": "salvoquaranta@gmail.com",
